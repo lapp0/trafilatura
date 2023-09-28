@@ -809,7 +809,7 @@ def determine_returnstring(document, output_format, include_formatting, tei_vali
         remove_empty_elements(document.body)
 
         if output_format == 'xmlhtml':
-            tree = fromstring(extracted_xml)
+            tree = fromstring(document)
             returnstring = tostring(tree, pretty_print=True, method='html').decode('utf-8')
         else:
             if output_format == 'xml':
