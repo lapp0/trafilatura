@@ -14,7 +14,7 @@ import warnings
 from copy import deepcopy
 
 from lxml.etree import Element, SubElement, strip_elements, strip_tags
-from lxml.html import tostring
+from lxml.html import tostring, fromstring
 
 # own
 from .external import (SANITIZED_XPATH, justext_rescue, sanitize_tree,
@@ -807,12 +807,18 @@ def determine_returnstring(document, output_format, include_formatting, tei_vali
         # build output trees
         strip_double_tags(document.body)
         remove_empty_elements(document.body)
-        if output_format == 'xml':
-            output = build_xml_output(document)
-        elif output_format == 'xmltei':
-            output = build_tei_output(document)
-        # can be improved
-        returnstring = control_xml_output(output, output_format, tei_validation, document)
+
+        if output_format == 'xmlhtml':
+            tree = fromstring(extracted_xml)
+            returnstring = tostring(tree, pretty_print=True, method='html').decode('utf-8')
+        else:
+            if output_format == 'xml':
+                output = build_xml_output(document)
+            elif output_format == 'xmltei':
+                output = build_tei_output(document)
+            # can be improved
+            returnstring = control_xml_output(output, output_format, tei_validation, document)
+
     # CSV
     elif output_format == 'csv':
         posttext = xmltotxt(document.body, include_formatting)
